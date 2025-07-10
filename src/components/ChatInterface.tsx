@@ -34,7 +34,7 @@ export default function ChatInterface({ processedUrl }: ChatInterfaceProps) {
       setMessages(JSON.parse(savedMessages));
       setCurrentUrl(savedUrl);
     }
-  }, []);
+  }, [processedUrl]);
 
   // Save messages to localStorage when they change
   useEffect(() => {
