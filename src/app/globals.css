@@ -115,17 +115,30 @@ html {
 }
 
 .cs-button--send {
-  background: linear-gradient(to right, #6366f1, #8b5cf6) !important;
+  background: linear-gradient(to right, #4f46e5, #6d28d9) !important;
   border-radius: 50% !important;
   margin-right: 8px !important;
   position: relative !important;
   right: 0 !important;
   bottom: 0 !important;
-  width: 40px !important;
-  height: 40px !important;
+  width: 44px !important;
+  height: 44px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.5) !important;
+  transition: all 0.2s ease !important;
+}
+
+.cs-button--send:hover {
+  transform: scale(1.05) !important;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.6) !important;
+}
+
+.cs-button--send svg {
+  width: 20px !important;
+  height: 20px !important;
+  fill: white !important;
 }
 
 /* Fix scrolling behavior */
