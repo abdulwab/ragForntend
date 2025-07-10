@@ -25,6 +25,12 @@ export default function Home() {
             </ul>
           </nav>
         </div>
+        {/* Mobile title */}
+        <div className="md:hidden text-center mt-2">
+          <h1 className="text-xl font-bold text-white">
+            2wrap.com RAG Chatbot
+          </h1>
+        </div>
       </header>
       
       <main className="container mx-auto p-6 flex items-center justify-center min-h-[calc(100vh-144px)] bg-gradient-to-b from-gray-50 to-gray-100">
