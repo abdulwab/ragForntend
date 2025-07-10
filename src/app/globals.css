@@ -67,6 +67,20 @@ body {
   margin-left: 0 !important;
 }
 
+/* Fix send button positioning */
+.cs-message-input {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.cs-message-input__tools {
+  position: absolute !important;
+  right: 12px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
 /* Ensure smooth scrolling */
 html {
   scroll-behavior: smooth;
