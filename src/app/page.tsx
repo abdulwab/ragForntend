@@ -8,37 +8,37 @@ export default function Home() {
 
   return (
     <>
-      <header className="bg-blue-600 text-white py-3 shadow-md">
+      <header className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 shadow-lg">
         <div className="container mx-auto px-4 flex justify-between items-center">
           <div className="flex items-center">
-            <span className="font-bold text-xl">2wrap.com</span>
+            <span className="font-bold text-xl tracking-tight">2wrap.com</span>
           </div>
           <nav>
-            <ul className="flex space-x-4">
-              <li><a href="https://2wrap.com" className="hover:underline">Home</a></li>
-              <li><a href="https://2wrap.com/about" className="hover:underline">About</a></li>
+            <ul className="flex space-x-6">
+              <li><a href="https://2wrap.com" className="hover:text-indigo-200 transition-colors duration-200">Home</a></li>
+              <li><a href="https://2wrap.com/about" className="hover:text-indigo-200 transition-colors duration-200">About</a></li>
             </ul>
           </nav>
         </div>
       </header>
       
-      <main className="container mx-auto p-4 min-h-screen bg-gray-50">
-        <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">
+      <main className="container mx-auto p-6 min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+        <h1 className="text-2xl font-bold text-center mb-8 text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">
           2wrap.com RAG Chatbot
         </h1>
         
         <div className="max-w-3xl mx-auto">
-          <div className="bg-white p-6 rounded-lg shadow-md h-[650px]">
+          <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 h-[650px] backdrop-blur-sm bg-white/90">
             <ChatInterface processedUrl={processedUrl} />
           </div>
         </div>
       </main>
       
-      <footer className="bg-gray-100 border-t border-gray-200 py-3">
+      <footer className="bg-gradient-to-r from-indigo-900 to-purple-900 text-white py-4">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center">
-            <p className="text-sm text-gray-500">© {new Date().getFullYear()} 2wrap.com</p>
-            <p className="text-sm text-gray-500">Powered by RAG Technology</p>
+            <p className="text-sm">© {new Date().getFullYear()} 2wrap.com</p>
+            <p className="text-sm">Powered by RAG Technology</p>
           </div>
         </div>
       </footer>
