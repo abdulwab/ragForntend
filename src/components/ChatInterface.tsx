@@ -304,8 +304,8 @@ export default function ChatInterface({ processedUrl }: ChatInterfaceProps) {
               onSend={handleSend}
               attachButton={false}
               style={{
-                background: '#f9fafb',
-                borderTop: '1px solid #e5e7eb',
+                background: '#f8fafc',
+                borderTop: '1px solid #e2e8f0',
                 padding: '16px 20px',
                 display: 'flex',
                 alignItems: 'center',
