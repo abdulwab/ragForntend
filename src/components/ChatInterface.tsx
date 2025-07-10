@@ -265,31 +265,34 @@ export default function ChatInterface({ processedUrl }: ChatInterfaceProps) {
                   }}
                   style={{
                     ...(message.sender === 'assistant' && {
-                      background: 'linear-gradient(to right, #8b5cf6, #6366f1)',
+                      background: 'linear-gradient(to right, #6d28d9, #4f46e5)',
                       color: 'white',
                       padding: '16px 20px',
                       borderRadius: '18px',
                       whiteSpace: 'pre-wrap',
                       maxWidth: 'none',
                       width: 'auto',
+                      boxShadow: '0 4px 6px rgba(99, 102, 241, 0.25)',
                     }),
                     ...(message.sender === 'user' && {
-                      background: '#f3f4f6',
-                      color: '#1f2937',
+                      background: '#e5e7eb',
+                      color: '#111827',
                       padding: '16px 20px',
                       borderRadius: '18px',
                       whiteSpace: 'pre-wrap',
                       maxWidth: 'none',
                       width: 'auto',
+                      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
                     }),
                     ...(message.sender === 'system' && {
-                      background: '#eff6ff',
-                      color: '#1e40af',
+                      background: '#dbeafe',
+                      color: '#1e3a8a',
                       padding: '16px 20px',
                       borderRadius: '18px',
                       whiteSpace: 'pre-wrap',
                       maxWidth: 'none',
                       width: 'auto',
+                      boxShadow: '0 2px 4px rgba(30, 64, 175, 0.1)',
                     })
                   }}
                 />
