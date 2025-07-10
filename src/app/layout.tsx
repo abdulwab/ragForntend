@@ -5,9 +5,9 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "AI Chatbot",
-  description: "Ask questions and get intelligent answers powered by AI",
-  keywords: "AI, chatbot, question answering, artificial intelligence",
+  title: "2wrap.com RAG Chatbot",
+  description: "Ask questions and get intelligent answers powered by RAG technology",
+  keywords: "2wrap, RAG, chatbot, question answering, artificial intelligence",
 };
 
 export default function RootLayout({
@@ -17,6 +17,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+      </head>
       <body className={inter.className}>{children}</body>
     </html>
   );

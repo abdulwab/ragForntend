@@ -186,7 +186,7 @@ export default function ChatInterface({ processedUrl }: ChatInterfaceProps) {
           Clear Chat
         </button>
       </div>
-      <MainContainer className="h-[640px]">
+      <MainContainer className="h-[590px]">
         <ChatContainer>
           <MessageList
             typingIndicator={isTyping ? <TypingIndicator content="AI is thinking" /> : null}
