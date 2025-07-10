@@ -33,7 +33,7 @@ export default function Home() {
         </div>
       </header>
       
-      <main className="container mx-auto p-6 flex items-center justify-center min-h-[calc(100vh-144px)] bg-gradient-to-b from-gray-50 to-gray-100">
+      <main className="container mx-auto py-10 px-6 flex items-center justify-center min-h-[calc(100vh-144px)] bg-gradient-to-b from-gray-50 to-gray-100">
         <div className="w-full max-w-3xl">
           <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 h-[650px] backdrop-blur-sm bg-white/90">
             <ChatInterface processedUrl={processedUrl} />
