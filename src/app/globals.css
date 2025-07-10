@@ -76,7 +76,7 @@ body {
 
 .cs-message-input__tools {
   position: absolute !important;
-  right: 12px !important;
+  right: 16px !important;
   top: 50% !important;
   transform: translateY(-50%) !important;
   display: flex !important;
