@@ -2,7 +2,9 @@
 
 import { useState } from 'react';
 import { processWebsite } from '@/lib/api-client';
-import { FiGlobe, FiSettings } from 'react-icons/fi';
+import { FiGlobe, FiSettings, FiLoader } from 'react-icons/fi';
+import ErrorMessage from './ErrorMessage';
+import SuccessMessage from './SuccessMessage';
 
 interface WebsiteProcessorProps {
   onProcessed: (url: string) => void;
@@ -110,22 +112,21 @@ export default function WebsiteProcessor({ onProcessed }: WebsiteProcessorProps)
             className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white 
               ${isProcessing || !url ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'}`}
           >
-            {isProcessing ? 'Processing...' : 'Process Website'}
+            {isProcessing ? (
+              <span className="flex items-center">
+                <FiLoader className="animate-spin mr-2" />
+                Processing...
+              </span>
+            ) : (
+              'Process Website'
+            )}
           </button>
         </div>
       </form>
 
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
-          {error}
-        </div>
-      )}
+      {error && <ErrorMessage message={error} />}
 
-      {result && (
-        <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-md">
-          Website processed successfully! You can now ask questions about it.
-        </div>
-      )}
+      {result && <SuccessMessage message="Website processed successfully! You can now ask questions about it." />}
     </div>
   );
 } 
