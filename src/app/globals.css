@@ -142,6 +142,24 @@ html {
   fill: white !important;
 }
 
+/* Custom styling for typing indicator */
+.cs-typing-indicator {
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #6d28d9 !important;
+  font-style: italic !important;
+  padding: 8px 16px !important;
+}
+
+.cs-typing-indicator__text {
+  color: #6d28d9 !important;
+  font-size: 14px !important;
+}
+
+.cs-typing-indicator__dot {
+  background-color: #6d28d9 !important;
+}
+
 /* Fix scrolling behavior */
 .chat-container-wrapper {
   height: 100%;
