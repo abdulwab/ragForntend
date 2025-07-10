@@ -226,15 +226,14 @@ export default function ChatInterface({ processedUrl }: ChatInterfaceProps) {
                   <TypingIndicator 
                                       content="AI is thinking" 
                   style={{
-                    background: 'linear-gradient(to right, #6d28d9, #4f46e5)',
-                    color: 'white',
+                    background: 'transparent',
+                    color: '#6d28d9',
                     padding: '16px 20px',
-                    borderRadius: '18px',
                     fontSize: '14px',
                     whiteSpace: 'pre-wrap',
                     maxWidth: 'none',
                     width: 'auto',
-                    boxShadow: '0 4px 6px rgba(99, 102, 241, 0.25)'
+                    fontStyle: 'italic'
                   }}
                   /> 
                   : null
