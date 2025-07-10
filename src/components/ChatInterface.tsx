@@ -224,7 +224,7 @@ export default function ChatInterface({ processedUrl }: ChatInterfaceProps) {
               typingIndicator={
                 isTyping ? 
                   <TypingIndicator 
-                                      content="AI is thinking" 
+                                      content="2wrap assistant is responding..." 
                   style={{
                     background: 'transparent',
                     color: '#6d28d9',
