@@ -44,9 +44,21 @@ export default function ChatInterface({ processedUrl }: ChatInterfaceProps) {
     }
   }, [messages, currentUrl]);
 
-  // Add welcome message when a new URL is processed
+  // Add welcome message when component mounts or when a new URL is processed
   useEffect(() => {
-    if (processedUrl && processedUrl !== currentUrl) {
+    // If no messages and no URL processed yet, show default welcome
+    if (messages.length === 0 && !currentUrl) {
+      setMessages([
+        {
+          message: `Welcome! Ask me anything.`,
+          sender: 'system',
+          direction: 'incoming',
+          position: 'single'
+        }
+      ]);
+    }
+    // If a new URL is processed, show website-specific welcome
+    else if (processedUrl && processedUrl !== currentUrl) {
       setMessages([
         {
           message: `Website processed: ${processedUrl}. What would you like to know about it?`,
@@ -57,7 +69,7 @@ export default function ChatInterface({ processedUrl }: ChatInterfaceProps) {
       ]);
       setCurrentUrl(processedUrl);
     }
-  }, [processedUrl, currentUrl]);
+  }, [processedUrl, currentUrl, messages.length]);
 
   const handleSend = async (query: string) => {
     // Add user message
@@ -100,11 +112,22 @@ export default function ChatInterface({ processedUrl }: ChatInterfaceProps) {
     setMessages([]);
     localStorage.removeItem('chatHistory');
     
-    // Re-add welcome message if a URL is processed
+    // Re-add welcome message
     if (currentUrl) {
+      // If a URL is processed, show website-specific welcome
       setMessages([
         {
           message: `Website processed: ${currentUrl}. What would you like to know about it?`,
+          sender: 'system',
+          direction: 'incoming',
+          position: 'single'
+        }
+      ]);
+    } else {
+      // Otherwise show default welcome
+      setMessages([
+        {
+          message: `Welcome! Ask me anything.`,
           sender: 'system',
           direction: 'incoming',
           position: 'single'
@@ -134,9 +157,9 @@ export default function ChatInterface({ processedUrl }: ChatInterfaceProps) {
             typingIndicator={isTyping ? <TypingIndicator content="AI is thinking" /> : null}
             scrollBehavior="smooth"
           >
-            {messages.length === 0 && !processedUrl && (
+            {messages.length === 0 && (
               <div className="flex items-center justify-center h-full text-gray-400 text-center p-4">
-                Process a website first, then ask questions about it here
+                Ask a question to start chatting
               </div>
             )}
             {messages.map((message, i) => (
@@ -152,10 +175,9 @@ export default function ChatInterface({ processedUrl }: ChatInterfaceProps) {
             ))}
           </MessageList>
           <MessageInput
-            placeholder={processedUrl ? "Type your question here..." : "Process a website first..."}
+            placeholder="Type your question here..."
             onSend={handleSend}
             attachButton={false}
-            disabled={!processedUrl}
           />
         </ChatContainer>
       </MainContainer>
