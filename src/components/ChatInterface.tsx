@@ -27,51 +27,75 @@ export default function ChatInterface({ processedUrl }: ChatInterfaceProps) {
 
   // Load messages from localStorage on component mount
   useEffect(() => {
-    const savedMessages = localStorage.getItem('chatHistory');
-    const savedUrl = localStorage.getItem('processedUrl');
-    
-    if (savedMessages && savedUrl && savedUrl === processedUrl) {
-      setMessages(JSON.parse(savedMessages));
-      setCurrentUrl(savedUrl);
+    try {
+      const savedMessages = localStorage.getItem('chatHistory');
+      const savedUrl = localStorage.getItem('processedUrl');
+      
+      console.log('Loading from localStorage - savedUrl:', savedUrl, 'processedUrl:', processedUrl);
+      
+      if (savedMessages && savedUrl && savedUrl === processedUrl) {
+        console.log('Found matching saved messages, loading from localStorage');
+        setMessages(JSON.parse(savedMessages));
+        setCurrentUrl(savedUrl);
+      } else {
+        console.log('No matching saved messages found');
+      }
+    } catch (error) {
+      console.error('Error loading messages from localStorage:', error);
     }
   }, [processedUrl]);
 
   // Save messages to localStorage when they change
   useEffect(() => {
-    if (messages.length > 0 && currentUrl) {
-      localStorage.setItem('chatHistory', JSON.stringify(messages));
-      localStorage.setItem('processedUrl', currentUrl);
+    try {
+      if (messages.length > 0 && currentUrl) {
+        console.log('Saving messages to localStorage, count:', messages.length);
+        localStorage.setItem('chatHistory', JSON.stringify(messages));
+        localStorage.setItem('processedUrl', currentUrl);
+      }
+    } catch (error) {
+      console.error('Error saving messages to localStorage:', error);
     }
   }, [messages, currentUrl]);
 
   // Add welcome message when component mounts or when a new URL is processed
   useEffect(() => {
-    // If no messages and no URL processed yet, show default welcome
-    if (messages.length === 0 && !currentUrl) {
-      setMessages([
-        {
-          message: `Welcome! Ask me anything.`,
-          sender: 'system',
-          direction: 'incoming',
-          position: 'single'
-        }
-      ]);
-    }
-    // If a new URL is processed, show website-specific welcome
-    else if (processedUrl && processedUrl !== currentUrl) {
-      setMessages([
-        {
-          message: `Website processed: ${processedUrl}. What would you like to know about it?`,
-          sender: 'system',
-          direction: 'incoming',
-          position: 'single'
-        }
-      ]);
-      setCurrentUrl(processedUrl);
+    try {
+      console.log('Welcome message effect - messages:', messages.length, 'currentUrl:', currentUrl, 'processedUrl:', processedUrl);
+      
+      // If no messages and no URL processed yet, show default welcome
+      if (messages.length === 0 && !currentUrl) {
+        console.log('Setting default welcome message');
+        setMessages([
+          {
+            message: `Welcome! Ask me anything.`,
+            sender: 'system',
+            direction: 'incoming',
+            position: 'single'
+          }
+        ]);
+      }
+      // If a new URL is processed, show website-specific welcome
+      else if (processedUrl && processedUrl !== currentUrl) {
+        console.log('Setting website-specific welcome message for:', processedUrl);
+        setMessages([
+          {
+            message: `Website processed: ${processedUrl}. What would you like to know about it?`,
+            sender: 'system',
+            direction: 'incoming',
+            position: 'single'
+          }
+        ]);
+        setCurrentUrl(processedUrl);
+      }
+    } catch (error) {
+      console.error('Error setting welcome message:', error);
     }
   }, [processedUrl, currentUrl, messages.length]);
 
   const handleSend = async (query: string) => {
+    console.log('Sending query:', query);
+    
     // Add user message
     const userMessage: ChatMessage = {
       message: query,
@@ -83,8 +107,15 @@ export default function ChatInterface({ processedUrl }: ChatInterfaceProps) {
     setIsTyping(true);
     
     try {
+      console.log('Calling queryRag API...');
       // Query RAG API
       const response = await queryRag(query);
+      console.log('Response received from queryRag:', response);
+      
+      if (!response || !response.answer) {
+        console.error('Invalid response format:', response);
+        throw new Error('Received invalid response format from server');
+      }
       
       // Add AI response
       const botMessage: ChatMessage = {
@@ -93,8 +124,11 @@ export default function ChatInterface({ processedUrl }: ChatInterfaceProps) {
         direction: 'incoming',
         position: 'single'
       };
+      console.log('Adding bot message to chat:', botMessage);
       setMessages(prev => [...prev, botMessage]);
     } catch (error) {
+      console.error('Error in handleSend:', error);
+      
       // Add error message
       const errorMessage: ChatMessage = {
         message: `Error: ${error instanceof Error ? error.message : 'An unknown error occurred'}`,
@@ -102,6 +136,7 @@ export default function ChatInterface({ processedUrl }: ChatInterfaceProps) {
         direction: 'incoming',
         position: 'single'
       };
+      console.log('Adding error message to chat:', errorMessage);
       setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsTyping(false);
