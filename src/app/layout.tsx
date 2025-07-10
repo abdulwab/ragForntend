@@ -5,9 +5,9 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "RAG Chatbot - Website Question Answering",
-  description: "Ask questions about any website using RAG (Retrieval-Augmented Generation) technology",
-  keywords: "RAG, chatbot, AI, question answering, website analysis",
+  title: "AI Chatbot",
+  description: "Ask questions and get intelligent answers powered by AI",
+  keywords: "AI, chatbot, question answering, artificial intelligence",
 };
 
 export default function RootLayout({
