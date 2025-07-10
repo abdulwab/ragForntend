@@ -1,26 +1,145 @@
 @import "tailwindcss";
+@tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --foreground-rgb: 15, 23, 42;
+  --background-start-rgb: 249, 250, 251;
+  --background-end-rgb: 243, 244, 246;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c7d2fe;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a5b4fc;
+}
+
+/* Custom styles for chat UI */
+.cs-message__content {
+  border-radius: 18px !important;
+  padding: 16px 20px !important;
+  max-width: none !important;
+  width: auto !important;
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+}
+
+.cs-message-list__content {
+  padding: 16px !important;
+}
+
+.cs-message {
+  margin-bottom: 16px !important;
+  max-width: 90% !important;
+}
+
+/* Fix message alignment */
+.cs-message--outgoing {
+  margin-left: auto !important;
+  margin-right: 0 !important;
+}
+
+.cs-message--incoming {
+  margin-right: auto !important;
+  margin-left: 0 !important;
+}
+
+/* Ensure smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+.cs-message-input__content-editor-wrapper {
+  background: #f9fafb !important;
+  border-radius: 24px !important;
+  border: 1px solid #e5e7eb !important;
+  margin: 0 8px !important;
+}
+
+.cs-message-input__content-editor {
+  padding: 14px 18px !important;
+  font-size: 15px !important;
+  min-height: 24px !important;
+}
+
+.cs-button--send {
+  background: linear-gradient(to right, #6366f1, #8b5cf6) !important;
+  border-radius: 50% !important;
+  margin-right: 4px !important;
+}
+
+/* Fix scrolling behavior */
+.chat-container-wrapper {
+  height: 100%;
+  position: relative;
+}
+
+.cs-main-container {
+  overflow: hidden !important;
+  height: 100% !important;
+}
+
+.cs-chat-container {
+  overflow: hidden !important;
+  height: 100% !important;
+}
+
+.custom-message-list {
+  overflow-y: auto !important;
+  height: 100% !important;
+  scroll-behavior: smooth;
+  padding: 0.5rem;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ensure message content is displayed properly */
+.cs-message__content-wrapper {
+  max-width: 100% !important;
+  width: auto !important;
+}
+
+/* Prevent body scrolling when hovering over chat */
+body.chat-hover {
+  overflow: hidden;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.cs-message {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Improve focus styles */
+*:focus {
+  outline: 2px solid #818cf8;
+  outline-offset: 2px;
 }
