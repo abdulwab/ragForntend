@@ -303,6 +303,8 @@ export default function ChatInterface({ processedUrl }: ChatInterfaceProps) {
                 background: '#f9fafb',
                 borderTop: '1px solid #e5e7eb',
                 padding: '16px 20px',
+                display: 'flex',
+                alignItems: 'center',
               }}
             />
           </ChatContainer>
