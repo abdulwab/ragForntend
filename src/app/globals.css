@@ -86,7 +86,7 @@ body {
 
 /* Ensure input padding accommodates the button */
 .cs-message-input__content-editor-wrapper {
-  padding-right: 50px !important;
+  padding-right: 60px !important;
 }
 
 /* Ensure smooth scrolling */
