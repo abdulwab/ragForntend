@@ -28,6 +28,6 @@ export async function queryRag(query: string) {
     const error = await response.json();
     throw new Error(error.detail || 'Failed to query RAG system');
   }
-  
+  console.log("Chatbot response", response.json());
   return response.json();
 } 
