@@ -74,19 +74,22 @@ body {
 .fullscreen-message-list {
   flex: 1 !important;
   overflow-y: auto !important;
-  padding: 24px !important;
+  padding: 0 !important;
   background: #ffffff !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 16px !important;
+  width: 100% !important;
 }
 
 .fullscreen-message-list .cs-message-list__content {
-  padding: 0 !important;
+  padding: 24px !important;
   display: flex !important;
   flex-direction: column !important;
   gap: 16px !important;
   min-height: 100% !important;
+  width: 100% !important;
+  max-width: 800px !important;
+  margin: 0 auto !important;
 }
 
 /* Message styling */
@@ -157,9 +160,11 @@ body {
   padding: 12px 24px !important;
   display: flex !important;
   align-items: center !important;
+  justify-content: center !important;
   gap: 8px !important;
   z-index: 10 !important;
   flex-shrink: 0 !important;
+  width: 100% !important;
 }
 
 .cs-message-input__content-container {
