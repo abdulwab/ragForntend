@@ -2,11 +2,6 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { queryRag } from '@/lib/api-client';
-import { 
-  MainContainer, ChatContainer, MessageList, Message, 
-  MessageInput, TypingIndicator
-} from '@chatscope/chat-ui-kit-react';
-import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 import { FiTrash2 } from 'react-icons/fi';
 
 interface ChatMessage {
@@ -27,6 +22,8 @@ export default function ChatInterface({ processedUrl, currentChatId, onChatUpdat
   const [isTyping, setIsTyping] = useState(false);
   const [currentUrl, setCurrentUrl] = useState<string>('');
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const shouldAutoScroll = useRef(true);
 
   // Load messages from localStorage on component mount
   useEffect(() => {
@@ -109,6 +106,22 @@ export default function ChatInterface({ processedUrl, currentChatId, onChatUpdat
       ]);
     }
   }, [currentChatId]);
+
+  // Auto-scroll to bottom only when new messages are added or typing starts
+  useEffect(() => {
+    if (shouldAutoScroll.current && messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages, isTyping]);
+
+  // Check if user is scrolled to bottom to determine if we should auto-scroll
+  const handleScroll = () => {
+    if (chatContainerRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
+      const isAtBottom = scrollTop + clientHeight >= scrollHeight - 10; // 10px threshold
+      shouldAutoScroll.current = isAtBottom;
+    }
+  };
 
   const handleSend = async (query: string) => {
     console.log('Sending query:', query);
@@ -222,106 +235,105 @@ export default function ChatInterface({ processedUrl, currentChatId, onChatUpdat
       </div>
 
       {/* Chat Container */}
-      <div className="flex-1 flex flex-col min-h-0">
-        <div ref={chatContainerRef} className="flex-1 chat-container-fullscreen">
-          <MainContainer className="h-full w-full">
-            <ChatContainer>
-              <MessageList
-                typingIndicator={
-                  isTyping ? 
-                    <TypingIndicator 
-                      content="2wrap assistant is responding..." 
-                      style={{
-                        background: 'transparent',
-                        color: '#6d28d9',
-                        padding: '16px 20px',
-                        fontSize: '14px',
-                        whiteSpace: 'pre-wrap',
-                        maxWidth: 'none',
-                        width: 'auto',
-                        fontStyle: 'italic'
-                      }}
-                    /> 
-                    : null
-                }
-                scrollBehavior="smooth"
-                className="fullscreen-message-list"
-              >
-                {messages.length === 0 && (
-                  <div className="flex flex-col items-center justify-center h-full p-6">
-                    <div className="w-16 h-16 mb-4 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                      </svg>
-                    </div>
-                    <div className="text-lg font-medium text-gray-700 mb-1">Welcome to 2wrap.com!</div>
-                    <div className="text-sm text-gray-500 text-center max-w-md">
-                      Ask me about 2wrap&apos;s products, services, or how we can help with your wrapping needs.
+      <div className="flex-1 flex flex-col min-h-0 relative">
+        <div className="flex-1 min-h-0">
+          <div 
+            ref={chatContainerRef}
+            className="h-full overflow-y-auto px-4 md:px-8 py-6"
+            onScroll={handleScroll}
+          >
+            <div className="max-w-4xl mx-auto space-y-6 pb-24">
+              {messages.length === 0 && (
+                <div className="flex flex-col items-center justify-center h-full p-6">
+                  <div className="w-16 h-16 mb-4 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                  </div>
+                  <div className="text-lg font-medium text-gray-700 mb-1">Welcome to 2wrap.com!</div>
+                  <div className="text-sm text-gray-500 text-center max-w-md">
+                    Ask me about 2wrap&apos;s products, services, or how we can help with your wrapping needs.
+                  </div>
+                </div>
+              )}
+              {messages.map((message, i) => (
+                <div
+                  key={i}
+                  className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div
+                    className={`max-w-[70%] px-4 py-3 rounded-2xl ${
+                      message.sender === 'user'
+                        ? 'bg-gray-100 text-gray-800'
+                        : message.sender === 'system'
+                        ? 'bg-gray-100 text-gray-600 italic'
+                        : 'bg-gray-100 text-gray-800'
+                    }`}
+                    style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
+                  >
+                    {message.message}
+                  </div>
+                </div>
+              ))}
+              {isTyping && (
+                <div className="flex justify-start">
+                  <div className="bg-gray-100 text-gray-600 px-4 py-3 rounded-2xl max-w-xs italic flex items-center space-x-1">
+                    <span>2wrap assistant is responding</span>
+                    <div className="flex space-x-1">
+                      <div className="w-1 h-1 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                      <div className="w-1 h-1 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                      <div className="w-1 h-1 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
                     </div>
                   </div>
-                )}
-                {messages.map((message, i) => (
-                  <Message
-                    key={i}
-                    model={{
-                      message: message.message,
-                      sender: message.sender,
-                      direction: message.direction,
-                      position: message.position
-                    }}
-                    style={{
-                      ...(message.sender === 'assistant' && {
-                        background: '#f7f7f8',
-                        color: '#374151',
-                        padding: '16px 20px',
-                        borderRadius: '18px',
-                        whiteSpace: 'pre-wrap',
-                        maxWidth: 'none',
-                        width: 'auto',
-                        border: '1px solid #e5e7eb',
-                      }),
-                      ...(message.sender === 'user' && {
-                        background: '#f7f7f8',
-                        color: '#374151',
-                        padding: '16px 20px',
-                        borderRadius: '18px',
-                        whiteSpace: 'pre-wrap',
-                        maxWidth: 'none',
-                        width: 'auto',
-                        border: '1px solid #e5e7eb',
-                      }),
-                      ...(message.sender === 'system' && {
-                        background: '#f7f7f8',
-                        color: '#6b7280',
-                        padding: '16px 20px',
-                        borderRadius: '18px',
-                        whiteSpace: 'pre-wrap',
-                        maxWidth: 'none',
-                        width: 'auto',
-                        border: '1px solid #e5e7eb',
-                        fontStyle: 'italic',
-                      })
-                    }}
-                  />
-                ))}
-              </MessageList>
-              <MessageInput
+                </div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+          </div>
+        </div>
+        
+        {/* Input Field */}
+        <div className="flex-shrink-0 p-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="w-full max-w-3xl mx-auto flex items-center gap-3 px-4 py-3 bg-transparent border border-gray-300 rounded-3xl focus-within:bg-white focus-within:border-gray-700 focus-within:shadow-lg transition-all duration-200">
+              <input
+                type="text"
                 placeholder="Ask about 2wrap's products or services..."
-                onSend={handleSend}
-                attachButton={false}
-                style={{
-                  background: '#ffffff',
-                  borderTop: '1px solid #e5e7eb',
-                  padding: '16px 20px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  position: 'sticky',
-                  bottom: 0,
-                  zIndex: 10,
+                className="flex-1 bg-transparent border-none outline-none focus:outline-none focus:ring-0 focus:border-none text-gray-800 placeholder-gray-500"
+                style={{ 
+                  boxShadow: 'none',
+                  border: 'none',
+                  outline: 'none'
+                }}
+                onFocus={(e) => {
+                  e.target.style.outline = 'none';
+                  e.target.style.border = 'none';
+                  e.target.style.boxShadow = 'none';
+                }}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter' && e.currentTarget.value.trim()) {
+                    handleSend(e.currentTarget.value);
+                    e.currentTarget.value = '';
+                  }
                 }}
               />
-            </ChatContainer>
-          </MainContainer>
+              <button
+                onClick={(e) => {
+                  const input = e.currentTarget.previousElementSibling as HTMLInputElement;
+                  if (input.value.trim()) {
+                    handleSend(input.value);
+                    input.value = '';
+                  }
+                }}
+                className="w-9 h-9 bg-gray-800 hover:bg-gray-700 text-white rounded-full flex items-center justify-center transition-all duration-200 hover:scale-105"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="m22 2-7 20-4-9-9-4z"/>
+                  <path d="M22 2 11 13"/>
+                </svg>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

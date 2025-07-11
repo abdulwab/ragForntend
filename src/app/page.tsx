@@ -22,7 +22,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="h-screen overflow-hidden">
       {/* Sidebar */}
       <Sidebar
         onNewChat={handleNewChat}
@@ -33,7 +33,7 @@ export default function Home() {
       />
       
       {/* Main Content */}
-      <div className={`flex-1 h-full transition-all duration-300 ${isSidebarOpen ? 'lg:ml-64' : 'lg:ml-0'}`}>
+      <div className={`h-full transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-0'}`}>
         <ChatInterface 
           processedUrl=""
           currentChatId={currentChatId}
