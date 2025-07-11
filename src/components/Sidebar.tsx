@@ -90,7 +90,7 @@ export default function Sidebar({ onNewChat, onSelectChat, currentChatId, isOpen
       <div className={`
         fixed top-0 left-0 h-full bg-gray-900 text-white z-50 transition-transform duration-300 ease-in-out
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
-        lg:translate-x-0 lg:static lg:z-auto
+        lg:${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:static lg:z-auto
         w-64 flex flex-col
       `}>
         {/* Header */}
@@ -173,10 +173,12 @@ export default function Sidebar({ onNewChat, onSelectChat, currentChatId, isOpen
         </div>
       </div>
 
-      {/* Mobile menu button */}
+      {/* Menu button */}
       <button
         onClick={onToggle}
-        className="lg:hidden fixed top-4 left-4 z-30 p-3 bg-gray-900 text-white rounded-lg shadow-lg hover:bg-gray-800 transition-colors"
+        className={`fixed top-4 z-30 p-3 bg-gray-900 text-white rounded-lg shadow-lg hover:bg-gray-800 transition-all duration-300 ${
+          isOpen ? 'left-[272px] lg:left-[272px]' : 'left-4'
+        }`}
       >
         <FiMenu size={20} />
       </button>
