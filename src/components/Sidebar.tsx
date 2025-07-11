@@ -173,15 +173,15 @@ export default function Sidebar({ onNewChat, onSelectChat, currentChatId, isOpen
         </div>
       </div>
 
-      {/* Menu button */}
-      <button
-        onClick={onToggle}
-        className={`fixed top-4 z-30 p-3 bg-gray-900 text-white rounded-lg shadow-lg hover:bg-gray-800 transition-all duration-300 ${
-          isOpen ? 'left-[272px] lg:left-[272px]' : 'left-4'
-        }`}
-      >
-        <FiMenu size={20} />
-      </button>
+      {/* Menu button - only show when sidebar is closed */}
+      {!isOpen && (
+        <button
+          onClick={onToggle}
+          className="fixed top-4 left-4 z-30 p-3 bg-gray-900 text-white rounded-lg shadow-lg hover:bg-gray-800 transition-all duration-300"
+        >
+          <FiMenu size={20} />
+        </button>
+      )}
     </>
   );
 } 
