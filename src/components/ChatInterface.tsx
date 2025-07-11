@@ -198,7 +198,7 @@ export default function ChatInterface({ processedUrl, currentChatId, onChatUpdat
   };
 
   return (
-    <div className="flex flex-col h-full bg-white">
+    <div className="flex flex-col h-full">
       {/* Header */}
       <div className="flex-shrink-0 flex justify-between items-center p-4 border-b border-gray-200 bg-white">
         <div className="flex items-center gap-4">
