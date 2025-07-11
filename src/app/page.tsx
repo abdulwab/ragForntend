@@ -37,7 +37,7 @@ export default function Home() {
         <ChatInterface 
           processedUrl=""
           currentChatId={currentChatId}
-          onChatUpdate={(chatId: string, title: string, messageCount: number) => {
+          onChatUpdate={(chatId: string) => {
             // Update chat session in sidebar if needed
             setCurrentChatId(chatId);
           }}
