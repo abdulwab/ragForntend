@@ -68,7 +68,7 @@ body {
   flex: 1 !important;
   overflow-y: auto !important;
   padding: 24px !important;
-  background: white !important;
+  background: #ffffff !important;
   display: flex !important;
   flex-direction: column !important;
   gap: 16px !important;
