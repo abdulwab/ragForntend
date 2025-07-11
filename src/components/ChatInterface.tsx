@@ -224,7 +224,7 @@ export default function ChatInterface({ processedUrl, currentChatId, onChatUpdat
       {/* Chat Container */}
       <div className="flex-1 flex flex-col min-h-0">
         <div ref={chatContainerRef} className="flex-1 chat-container-fullscreen">
-          <MainContainer className="h-full">
+          <MainContainer className="h-full w-full">
             <ChatContainer>
               <MessageList
                 typingIndicator={
