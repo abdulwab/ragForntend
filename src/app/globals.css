@@ -46,21 +46,28 @@ body {
 /* Full-screen chat container */
 .chat-container-fullscreen {
   height: 100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
 }
 
 .chat-container-fullscreen .cs-main-container {
   height: 100% !important;
+  width: 100% !important;
   border: none !important;
   border-radius: 0 !important;
   background: white !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 .chat-container-fullscreen .cs-chat-container {
   height: 100% !important;
+  width: 100% !important;
   display: flex !important;
   flex-direction: column !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 /* Message list styling */
