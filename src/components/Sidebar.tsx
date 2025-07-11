@@ -91,7 +91,7 @@ export default function Sidebar({ onNewChat, onSelectChat, currentChatId, isOpen
         fixed top-0 left-0 h-full bg-gray-900 text-white z-50 transition-transform duration-300 ease-in-out
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         lg:translate-x-0 lg:static lg:z-auto
-        w-80 flex flex-col
+        w-64 flex flex-col
       `}>
         {/* Header */}
         <div className="p-4 border-b border-gray-700">
