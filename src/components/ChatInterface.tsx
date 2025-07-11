@@ -18,9 +18,11 @@ interface ChatMessage {
 
 interface ChatInterfaceProps {
   processedUrl: string;
+  currentChatId: string | null;
+  onChatUpdate?: (chatId: string, title: string, messageCount: number) => void;
 }
 
-export default function ChatInterface({ processedUrl }: ChatInterfaceProps) {
+export default function ChatInterface({ processedUrl, currentChatId, onChatUpdate }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [currentUrl, setCurrentUrl] = useState<string>('');
@@ -93,32 +95,20 @@ export default function ChatInterface({ processedUrl }: ChatInterfaceProps) {
       console.error('Error setting welcome message:', error);
     }
   }, [processedUrl, currentUrl, messages.length]);
-  
-  // Handle mouse enter/leave for chat container to control body scrolling
+
+  // Reset messages when starting a new chat
   useEffect(() => {
-    const handleMouseEnter = () => {
-      document.body.classList.add('chat-hover');
-    };
-    
-    const handleMouseLeave = () => {
-      document.body.classList.remove('chat-hover');
-    };
-    
-    // Get the chat container element
-    const chatContainer = chatContainerRef.current;
-    
-    if (chatContainer) {
-      chatContainer.addEventListener('mouseenter', handleMouseEnter);
-      chatContainer.addEventListener('mouseleave', handleMouseLeave);
+    if (currentChatId === null) {
+      setMessages([
+        {
+          message: `Welcome to 2wrap.com! How can I help you with 2wrap's products or services today?`,
+          sender: 'system',
+          direction: 'incoming',
+          position: 'single'
+        }
+      ]);
     }
-    
-    return () => {
-      if (chatContainer) {
-        chatContainer.removeEventListener('mouseenter', handleMouseEnter);
-        chatContainer.removeEventListener('mouseleave', handleMouseLeave);
-      }
-    };
-  }, []);
+  }, [currentChatId]);
 
   const handleSend = async (query: string) => {
     console.log('Sending query:', query);
@@ -152,7 +142,17 @@ export default function ChatInterface({ processedUrl }: ChatInterfaceProps) {
         position: 'single'
       };
       console.log('Adding bot message to chat:', botMessage);
-      setMessages(prev => [...prev, botMessage]);
+      setMessages(prev => {
+        const newMessages = [...prev, botMessage];
+        
+        // Update chat session if callback provided
+        if (onChatUpdate && currentChatId) {
+          const title = newMessages.find(m => m.sender === 'user')?.message.slice(0, 50) || 'New Chat';
+          onChatUpdate(currentChatId, title, newMessages.length);
+        }
+        
+        return newMessages;
+      });
     } catch (error) {
       console.error('Error in handleSend:', error);
       
@@ -199,119 +199,130 @@ export default function ChatInterface({ processedUrl }: ChatInterfaceProps) {
   };
 
   return (
-    <div className="h-full">
-      <div className="flex justify-between mb-3">
-        <div className="text-sm text-indigo-600 font-medium">
-          {messages.length > 0 ? `${messages.length} messages` : 'Start a conversation'}
+    <div className="flex flex-col h-full bg-white">
+      {/* Header */}
+      <div className="flex-shrink-0 flex justify-between items-center p-4 border-b border-gray-200 bg-white">
+        <div className="flex items-center gap-4">
+          <h1 className="text-xl font-semibold text-gray-900">2wrap.com RAG Chatbot</h1>
+          <div className="text-sm text-gray-500">
+            {messages.length > 0 ? `${messages.length} messages` : 'Start a conversation'}
+          </div>
         </div>
         <button 
           onClick={clearChat}
           disabled={messages.length === 0}
-          className={`flex items-center text-sm px-3 py-1 rounded-full ${
+          className={`flex items-center text-sm px-3 py-1.5 rounded-lg transition-all ${
             messages.length === 0 
-              ? 'bg-gray-100 text-gray-300 cursor-not-allowed' 
-              : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-all duration-200'
+              ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+              : 'bg-red-50 text-red-600 hover:bg-red-100'
           }`}
         >
-          <FiTrash2 className="mr-1.5" />
+          <FiTrash2 className="mr-1.5" size={14} />
           Clear Chat
         </button>
       </div>
-      <div ref={chatContainerRef} className="chat-container-wrapper">
-        <MainContainer className="h-[590px] rounded-xl overflow-hidden border border-indigo-100 overflow-y-hidden">
-          <ChatContainer>
-            <MessageList
-              typingIndicator={
-                isTyping ? 
-                  <TypingIndicator 
-                                      content="2wrap assistant is responding..." 
-                  style={{
-                    background: 'transparent',
-                    color: '#6d28d9',
-                    padding: '16px 20px',
-                    fontSize: '14px',
-                    whiteSpace: 'pre-wrap',
-                    maxWidth: 'none',
-                    width: 'auto',
-                    fontStyle: 'italic'
-                  }}
-                  /> 
-                  : null
-              }
-              scrollBehavior="smooth"
-              className="custom-message-list"
-            >
-              {messages.length === 0 && (
-                <div className="flex flex-col items-center justify-center h-full p-6">
-                  <div className="w-16 h-16 mb-4 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
-                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                    </svg>
+
+      {/* Chat Container */}
+      <div className="flex-1 flex flex-col min-h-0">
+        <div ref={chatContainerRef} className="flex-1 chat-container-fullscreen">
+          <MainContainer className="h-full">
+            <ChatContainer>
+              <MessageList
+                typingIndicator={
+                  isTyping ? 
+                    <TypingIndicator 
+                      content="2wrap assistant is responding..." 
+                      style={{
+                        background: 'transparent',
+                        color: '#6d28d9',
+                        padding: '16px 20px',
+                        fontSize: '14px',
+                        whiteSpace: 'pre-wrap',
+                        maxWidth: 'none',
+                        width: 'auto',
+                        fontStyle: 'italic'
+                      }}
+                    /> 
+                    : null
+                }
+                scrollBehavior="smooth"
+                className="fullscreen-message-list"
+              >
+                {messages.length === 0 && (
+                  <div className="flex flex-col items-center justify-center h-full p-6">
+                    <div className="w-16 h-16 mb-4 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                      </svg>
+                    </div>
+                    <div className="text-lg font-medium text-gray-700 mb-1">Welcome to 2wrap.com!</div>
+                    <div className="text-sm text-gray-500 text-center max-w-md">
+                      Ask me about 2wrap&apos;s products, services, or how we can help with your wrapping needs.
+                    </div>
                   </div>
-                  <div className="text-lg font-medium text-gray-700 mb-1">Welcome to 2wrap.com!</div>
-                  <div className="text-sm text-gray-500 text-center max-w-md">
-                    Ask me about 2wrap&apos;s products, services, or how we can help with your wrapping needs.
-                  </div>
-                </div>
-              )}
-              {messages.map((message, i) => (
-                <Message
-                  key={i}
-                  model={{
-                    message: message.message,
-                    sender: message.sender,
-                    direction: message.direction,
-                    position: message.position
-                  }}
-                  style={{
-                    ...(message.sender === 'assistant' && {
-                      background: 'linear-gradient(to right, #6d28d9, #4f46e5)',
-                      color: 'white',
-                      padding: '16px 20px',
-                      borderRadius: '18px',
-                      whiteSpace: 'pre-wrap',
-                      maxWidth: 'none',
-                      width: 'auto',
-                      boxShadow: '0 4px 6px rgba(99, 102, 241, 0.25)',
-                    }),
-                    ...(message.sender === 'user' && {
-                      background: '#e5e7eb',
-                      color: '#111827',
-                      padding: '16px 20px',
-                      borderRadius: '18px',
-                      whiteSpace: 'pre-wrap',
-                      maxWidth: 'none',
-                      width: 'auto',
-                      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
-                    }),
-                    ...(message.sender === 'system' && {
-                      background: '#dbeafe',
-                      color: '#1e3a8a',
-                      padding: '16px 20px',
-                      borderRadius: '18px',
-                      whiteSpace: 'pre-wrap',
-                      maxWidth: 'none',
-                      width: 'auto',
-                      boxShadow: '0 2px 4px rgba(30, 64, 175, 0.1)',
-                    })
-                  }}
-                />
-              ))}
-            </MessageList>
-            <MessageInput
-              placeholder="Ask about 2wrap's products or services..."
-              onSend={handleSend}
-              attachButton={false}
-              style={{
-                background: '#f8fafc',
-                borderTop: '1px solid #e2e8f0',
-                padding: '16px 20px',
-                display: 'flex',
-                alignItems: 'center',
-              }}
-            />
-          </ChatContainer>
-        </MainContainer>
+                )}
+                {messages.map((message, i) => (
+                  <Message
+                    key={i}
+                    model={{
+                      message: message.message,
+                      sender: message.sender,
+                      direction: message.direction,
+                      position: message.position
+                    }}
+                    style={{
+                      ...(message.sender === 'assistant' && {
+                        background: 'linear-gradient(to right, #6d28d9, #4f46e5)',
+                        color: 'white',
+                        padding: '16px 20px',
+                        borderRadius: '18px',
+                        whiteSpace: 'pre-wrap',
+                        maxWidth: 'none',
+                        width: 'auto',
+                        boxShadow: '0 4px 6px rgba(99, 102, 241, 0.25)',
+                      }),
+                      ...(message.sender === 'user' && {
+                        background: '#e5e7eb',
+                        color: '#111827',
+                        padding: '16px 20px',
+                        borderRadius: '18px',
+                        whiteSpace: 'pre-wrap',
+                        maxWidth: 'none',
+                        width: 'auto',
+                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
+                      }),
+                      ...(message.sender === 'system' && {
+                        background: '#dbeafe',
+                        color: '#1e3a8a',
+                        padding: '16px 20px',
+                        borderRadius: '18px',
+                        whiteSpace: 'pre-wrap',
+                        maxWidth: 'none',
+                        width: 'auto',
+                        boxShadow: '0 2px 4px rgba(30, 64, 175, 0.1)',
+                      })
+                    }}
+                  />
+                ))}
+              </MessageList>
+              <MessageInput
+                placeholder="Ask about 2wrap's products or services..."
+                onSend={handleSend}
+                attachButton={false}
+                style={{
+                  background: '#ffffff',
+                  borderTop: '1px solid #e5e7eb',
+                  padding: '16px 20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  position: 'sticky',
+                  bottom: 0,
+                  zIndex: 10,
+                }}
+              />
+            </ChatContainer>
+          </MainContainer>
+        </div>
       </div>
     </div>
   );
