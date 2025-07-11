@@ -22,7 +22,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
       <Sidebar
         onNewChat={handleNewChat}
