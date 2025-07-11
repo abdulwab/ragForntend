@@ -99,7 +99,7 @@ export default function Sidebar({ onNewChat, onSelectChat, currentChatId, isOpen
             <h2 className="text-lg font-semibold">2wrap.com</h2>
             <button
               onClick={onToggle}
-              className="lg:hidden p-2 hover:bg-gray-800 rounded-lg transition-colors"
+              className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
             >
               <FiX size={20} />
             </button>
