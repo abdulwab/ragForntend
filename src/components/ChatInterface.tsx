@@ -19,7 +19,7 @@ interface ChatMessage {
 interface ChatInterfaceProps {
   processedUrl: string;
   currentChatId: string | null;
-  onChatUpdate?: (chatId: string, title: string, messageCount: number) => void;
+  onChatUpdate?: (chatId: string) => void;
 }
 
 export default function ChatInterface({ processedUrl, currentChatId, onChatUpdate }: ChatInterfaceProps) {
@@ -147,8 +147,7 @@ export default function ChatInterface({ processedUrl, currentChatId, onChatUpdat
         
         // Update chat session if callback provided
         if (onChatUpdate && currentChatId) {
-          const title = newMessages.find(m => m.sender === 'user')?.message.slice(0, 50) || 'New Chat';
-          onChatUpdate(currentChatId, title, newMessages.length);
+          onChatUpdate(currentChatId);
         }
         
         return newMessages;
