@@ -104,6 +104,30 @@ body {
   border: 1px solid #e5e7eb !important;
 }
 
+/* Override any default message styling */
+.cs-message__content-wrapper {
+  background: transparent !important;
+}
+
+.cs-message--system .cs-message__content {
+  background: #f7f7f8 !important;
+  color: #6b7280 !important;
+  border: 1px solid #e5e7eb !important;
+  font-style: italic !important;
+}
+
+.cs-message--incoming .cs-message__content {
+  background: #f7f7f8 !important;
+  color: #374151 !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+.cs-message--outgoing .cs-message__content {
+  background: #f7f7f8 !important;
+  color: #374151 !important;
+  border: 1px solid #e5e7eb !important;
+}
+
 /* Message alignment */
 .cs-message--outgoing {
   margin-left: auto !important;
