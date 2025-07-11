@@ -33,7 +33,7 @@ export default function Home() {
       />
       
       {/* Main Content */}
-      <div className={`flex-1 flex flex-col transition-all duration-300 ${isSidebarOpen ? 'lg:ml-64' : 'lg:ml-0'}`}>
+      <div className={`flex-1 h-full transition-all duration-300 ${isSidebarOpen ? 'lg:ml-64' : 'lg:ml-0'}`}>
         <ChatInterface 
           processedUrl=""
           currentChatId={currentChatId}
