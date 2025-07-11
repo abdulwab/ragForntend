@@ -271,34 +271,35 @@ export default function ChatInterface({ processedUrl, currentChatId, onChatUpdat
                     }}
                     style={{
                       ...(message.sender === 'assistant' && {
-                        background: 'linear-gradient(to right, #6d28d9, #4f46e5)',
-                        color: 'white',
+                        background: '#f7f7f8',
+                        color: '#374151',
                         padding: '16px 20px',
                         borderRadius: '18px',
                         whiteSpace: 'pre-wrap',
                         maxWidth: 'none',
                         width: 'auto',
-                        boxShadow: '0 4px 6px rgba(99, 102, 241, 0.25)',
+                        border: '1px solid #e5e7eb',
                       }),
                       ...(message.sender === 'user' && {
-                        background: '#e5e7eb',
-                        color: '#111827',
+                        background: '#f7f7f8',
+                        color: '#374151',
                         padding: '16px 20px',
                         borderRadius: '18px',
                         whiteSpace: 'pre-wrap',
                         maxWidth: 'none',
                         width: 'auto',
-                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
+                        border: '1px solid #e5e7eb',
                       }),
                       ...(message.sender === 'system' && {
-                        background: '#dbeafe',
-                        color: '#1e3a8a',
+                        background: '#f7f7f8',
+                        color: '#6b7280',
                         padding: '16px 20px',
                         borderRadius: '18px',
                         whiteSpace: 'pre-wrap',
                         maxWidth: 'none',
                         width: 'auto',
-                        boxShadow: '0 2px 4px rgba(30, 64, 175, 0.1)',
+                        border: '1px solid #e5e7eb',
+                        fontStyle: 'italic',
                       })
                     }}
                   />
