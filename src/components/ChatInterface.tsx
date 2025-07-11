@@ -21,9 +21,12 @@ export default function ChatInterface({ processedUrl, currentChatId, onChatUpdat
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [currentUrl, setCurrentUrl] = useState<string>('');
+  const [streamingMessage, setStreamingMessage] = useState<string>('');
+  const [isStreaming, setIsStreaming] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const shouldAutoScroll = useRef(true);
+  const streamingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Load messages from localStorage on component mount
   useEffect(() => {
@@ -58,61 +61,73 @@ export default function ChatInterface({ processedUrl, currentChatId, onChatUpdat
     }
   }, [messages, currentUrl]);
 
-  // Add welcome message when component mounts or when a new URL is processed
+  // Set current URL when processed
   useEffect(() => {
-    try {
-      console.log('Welcome message effect - messages:', messages.length, 'currentUrl:', currentUrl, 'processedUrl:', processedUrl);
-      
-      // If no messages and no URL processed yet, show default welcome
-      if (messages.length === 0 && !currentUrl) {
-        console.log('Setting default welcome message');
-        setMessages([
-          {
-            message: `Welcome to 2wrap.com! How can I help you with 2wrap's products or services today?`,
-            sender: 'system',
-            direction: 'incoming',
-            position: 'single'
-          }
-        ]);
-      }
-      // If a new URL is processed, show website-specific welcome
-      else if (processedUrl && processedUrl !== currentUrl) {
-        console.log('Setting website-specific welcome message for:', processedUrl);
-        setMessages([
-          {
-            message: `Website processed: ${processedUrl}. What would you like to know about it?`,
-            sender: 'system',
-            direction: 'incoming',
-            position: 'single'
-          }
-        ]);
-        setCurrentUrl(processedUrl);
-      }
-    } catch (error) {
-      console.error('Error setting welcome message:', error);
+    if (processedUrl && processedUrl !== currentUrl) {
+      setCurrentUrl(processedUrl);
     }
-  }, [processedUrl, currentUrl, messages.length]);
+  }, [processedUrl, currentUrl]);
 
   // Reset messages when starting a new chat
   useEffect(() => {
     if (currentChatId === null) {
-      setMessages([
-        {
-          message: `Welcome to 2wrap.com! How can I help you with 2wrap's products or services today?`,
-          sender: 'system',
-          direction: 'incoming',
-          position: 'single'
-        }
-      ]);
+      setMessages([]);
     }
   }, [currentChatId]);
+
+  // Cleanup streaming timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (streamingTimeoutRef.current) {
+        clearTimeout(streamingTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Auto-scroll to bottom only when new messages are added or typing starts
   useEffect(() => {
     if (shouldAutoScroll.current && messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [messages, isTyping]);
+  }, [messages, isTyping, isStreaming]);
+
+  // ChatGPT-style streaming animation function
+  const streamText = (text: string) => {
+    setIsStreaming(true);
+    setStreamingMessage('');
+    
+    let index = 0;
+    
+    const streamNextChunk = () => {
+      if (index < text.length) {
+        // Stream multiple characters at once for faster speed
+        const chunkSize = Math.floor(Math.random() * 3) + 1; // 1-3 characters
+        const chunk = text.substring(index, index + chunkSize);
+        setStreamingMessage(prev => prev + chunk);
+        index += chunkSize;
+        
+        // Fast, consistent streaming speed like ChatGPT
+        const delay = 20 + Math.random() * 30; // 20-50ms per chunk
+        
+        streamingTimeoutRef.current = setTimeout(streamNextChunk, delay);
+      } else {
+        setIsStreaming(false);
+        
+        // Add the complete message to the messages array
+        const botMessage: ChatMessage = {
+          message: text,
+          sender: 'assistant',
+          direction: 'incoming',
+          position: 'single'
+        };
+        setMessages(prev => [...prev, botMessage]);
+        setStreamingMessage('');
+      }
+    };
+    
+    // Start streaming immediately
+    streamingTimeoutRef.current = setTimeout(streamNextChunk, 50);
+  };
 
   // Check if user is scrolled to bottom to determine if we should auto-scroll
   const handleScroll = () => {
@@ -147,24 +162,16 @@ export default function ChatInterface({ processedUrl, currentChatId, onChatUpdat
         throw new Error('Received invalid response format from server');
       }
       
-      // Add AI response
-      const botMessage: ChatMessage = {
-        message: response.answer,
-        sender: 'assistant',
-        direction: 'incoming',
-        position: 'single'
-      };
-      console.log('Adding bot message to chat:', botMessage);
-      setMessages(prev => {
-        const newMessages = [...prev, botMessage];
-        
-        // Update chat session if callback provided
-        if (onChatUpdate && currentChatId) {
-          onChatUpdate(currentChatId);
-        }
-        
-        return newMessages;
-      });
+      // Stream the AI response
+      console.log('Starting streaming response:', response.answer);
+      
+      // Update chat session if callback provided
+      if (onChatUpdate && currentChatId) {
+        onChatUpdate(currentChatId);
+      }
+      
+      // Start streaming animation
+      streamText(response.answer);
     } catch (error) {
       console.error('Error in handleSend:', error);
       
@@ -185,29 +192,6 @@ export default function ChatInterface({ processedUrl, currentChatId, onChatUpdat
   const clearChat = () => {
     setMessages([]);
     localStorage.removeItem('chatHistory');
-    
-    // Re-add welcome message
-    if (currentUrl) {
-      // If a URL is processed, show website-specific welcome
-      setMessages([
-        {
-          message: `Website processed: ${currentUrl}. What would you like to know about it?`,
-          sender: 'system',
-          direction: 'incoming',
-          position: 'single'
-        }
-      ]);
-    } else {
-      // Otherwise show default welcome
-      setMessages([
-        {
-          message: `Welcome to 2wrap.com! How can I help you with 2wrap's products or services today?`,
-          sender: 'system',
-          direction: 'incoming',
-          position: 'single'
-        }
-      ]);
-    }
   };
 
   return (
@@ -284,6 +268,16 @@ export default function ChatInterface({ processedUrl, currentChatId, onChatUpdat
                       <div className="w-1 h-1 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
                       <div className="w-1 h-1 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
                     </div>
+                  </div>
+                </div>
+              )}
+              {isStreaming && (
+                <div className="flex justify-start">
+                  <div className="bg-gray-100 text-gray-800 px-4 py-3 rounded-2xl max-w-[70%] relative">
+                    <span style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+                      {streamingMessage}
+                    </span>
+                    <span className="inline-block w-0.5 h-5 bg-gray-800 ml-0.5 animate-pulse" style={{ animationDuration: '1s' }}></span>
                   </div>
                 </div>
               )}
