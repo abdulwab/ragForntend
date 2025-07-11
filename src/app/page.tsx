@@ -6,7 +6,7 @@ import Sidebar from '@/components/Sidebar';
 
 export default function Home() {
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const handleNewChat = () => {
     setCurrentChatId(null);
@@ -33,7 +33,7 @@ export default function Home() {
       />
       
       {/* Main Content */}
-      <div className="flex-1 flex flex-col lg:ml-0">
+      <div className={`flex-1 flex flex-col transition-all duration-300 ${isSidebarOpen ? 'lg:ml-64' : 'lg:ml-0'}`}>
         <ChatInterface 
           processedUrl=""
           currentChatId={currentChatId}
